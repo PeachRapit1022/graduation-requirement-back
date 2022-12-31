@@ -28,14 +28,14 @@ dbname = './db/Test.db'
 def csv_to_df(raw_text: str):
 
     # 不要な文字を削除
-    raw_text = re.sub('\n+|"+|\t+','',raw_text)
+    raw_text = re.sub('\n+|,"",+|"+|\t+','',raw_text)
 
     # 改行ごとにリスト分割
     list_text = raw_text.split('\r')
 
     # Columnインデックス生成
-    index = list_text[4].split(',')
-    index.append('')
+    index = list_text[4].split(',')[:-1]
+    print(index)
 
     # 不要な行を削除
     list_text = list_text[5:-1]
@@ -49,7 +49,6 @@ def csv_to_df(raw_text: str):
 def df_to_db(df: pd.DataFrame):
     # DB操作
     conn = sqlite3.connect(dbname)
-    #cur = conn.cursor()
 
     df.to_sql('user_record', conn, if_exists='replace')
     df1 = pd.read_sql_query(
@@ -65,7 +64,7 @@ def df_to_db(df: pd.DataFrame):
         WHERE credits.code IS NULL
         '''   
         , conn)
-    #conn.commit()
+
     df2  = pd.read_sql_query(
         '''
         SELECT 科目, code, credit, main_class.name, sub_class.name
@@ -95,7 +94,6 @@ async def file(file: bytes = File(...)):
     df = csv_to_df(raw_text)
 
     df1, df2 = df_to_db(df)
-    conn = sqlite3.connect(dbname)
 
     return raw_text, df1.to_dict(orient='records')
 
@@ -107,7 +105,20 @@ class Info(BaseModel):
 
 @app.post("/postcresitinfo/")
 async def post_cresit_info(info: Info):
+
+    code = info.code
+    credit = info.credit
+    main = info.main
+    sub = info.sub
+
     print(info)
+    conn = sqlite3.connect(dbname)
+    cur = conn.cursor()
+
+    cur.execute('INSERT INTO credits(code, credit, main, sub) values("{}","{}","{}","{}")'.format(code, credit, main, sub))
+    conn.commit()
+    conn.close()
+
     return info
 
 if __name__ == '__main__':
