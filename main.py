@@ -97,13 +97,18 @@ async def file(file: bytes = File(...)):
     df1, df2 = df_to_db(df)
     conn = sqlite3.connect(dbname)
 
-    #df1 = pd.read_sql_query(
-    '''
-    SELECT *
-    FROM main_class
-    '''
-    #,conn)
-    return df1.values.tolist(), raw_text
+    return raw_text, df1.to_dict(orient='records')
+
+class Info(BaseModel):
+    code: str
+    credit: float
+    main: int
+    sub: int
+
+@app.post("/postcresitinfo/")
+async def post_cresit_info(info: Info):
+    print(info)
+    return info
 
 if __name__ == '__main__':
     uvicorn.run(app)
