@@ -35,7 +35,6 @@ def csv_to_df(raw_text: str):
 
     # Columnインデックス生成
     index = list_text[4].split(',')[:-1]
-    print(index)
 
     # 不要な行を削除
     list_text = list_text[5:-1]
@@ -51,6 +50,7 @@ def df_to_db(df: pd.DataFrame):
     conn = sqlite3.connect(dbname)
 
     df.to_sql('user_record', conn, if_exists='replace')
+    # 単位情報なしリスト
     df1 = pd.read_sql_query(
         '''
         SELECT 科目, 時間割コード
@@ -65,6 +65,7 @@ def df_to_db(df: pd.DataFrame):
         '''   
         , conn)
 
+    # 単位情報ありリスト
     df2  = pd.read_sql_query(
         '''
         SELECT 科目, code, credit, main_class.name, sub_class.name
@@ -82,6 +83,27 @@ def df_to_db(df: pd.DataFrame):
 
     return df1, df2
 
+def db_groupby():
+    conn = sqlite3.connect(dbname)
+
+    df = pd.read_sql_query(
+        '''
+        SELECT main_class.name AS name1, sub_class.name AS name2, SUM(credits.credit) AS sum
+        FROM user_record
+        JOIN credits
+        ON user_record.時間割コード = credits.code
+        JOIN main_class
+        ON credits.main = main_class.id
+        JOIN sub_class
+        ON credits.sub = sub_class.id
+
+
+        GROUP BY main_class.name, sub_class.name
+        ORDER BY main_class.id
+        '''
+    ,conn)
+    return df
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -95,7 +117,15 @@ async def file(file: bytes = File(...)):
 
     df1, df2 = df_to_db(df)
 
-    return raw_text, df1.to_dict(orient='records')
+    if len(df1) > 0:
+        unknown = True
+        return unknown, raw_text, df1.to_dict(orient='records')
+    
+    else:
+        unknown = False
+        df = db_groupby()
+        print(df)
+        return unknown, df.to_dict(orient='records')
 
 class Info(BaseModel):
     code: str

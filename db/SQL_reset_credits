@@ -1,4 +1,0 @@
--- SQLite
-DELETE
-FROM credits
-WHERE id = 43
