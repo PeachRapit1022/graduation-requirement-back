@@ -65,7 +65,7 @@ def graduate_rule_2():
 
     df = pd.read_sql_query(
         '''
-        SELECT sub_class.name AS category, IFNULL (SUM(credits.credit), 0) AS sum,
+        SELECT main_class.name AS category, IFNULL (SUM(credits.credit), 0) AS sum,
         IFNULL (CASE WHEN SUM(credits.credit) >= 14 THEN 0 ELSE 14-SUM(credits.credit) END,14) AS result
         FROM user_record
         JOIN credits
@@ -87,7 +87,7 @@ def graduate_rule_3():
 
     df = pd.read_sql_query(
         '''
-        SELECT sub_class.name AS category, IFNULL (SUM(credits.credit), 0) AS sum,
+        SELECT main_class.name AS category, IFNULL (SUM(credits.credit), 0) AS sum,
         IFNULL (CASE WHEN SUM(credits.credit) >= 46 THEN 0 ELSE 46-SUM(credits.credit) END,46) AS result
         FROM user_record
         JOIN credits
