@@ -141,7 +141,8 @@ def check_graduate_rule():
     df3 = graduate_rule_3().to_dict(orient='records')
     df4 = graduate_rule_4().to_dict(orient='records')
 
-    result = {'rule0':df0, 'rule1':df1, 'rule2':df2, 'rule3':df3, 'rule4':df4}
+    #result = {'rule0':df0, 'rule1':df1, 'rule2':df2, 'rule3':df3, 'rule4':df4}
+    result = [df0, df1, df2, df3, df4]
     return result
 
 if __name__ == '__main__':
