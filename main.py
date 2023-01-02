@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import Union
 import sqlite3
 import re
+from graduate import *
 
 import pandas as pd
 
@@ -24,6 +25,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
+    graduate_rule_3()
     return {"Hello": "World"}
 
 dbname = './db/Test.db'
@@ -128,17 +130,17 @@ async def file(file: bytes = File(...)):
     else:
         unknown = 2
         df = db_groupby()
-        print(df)
+        #print(df)
         return unknown, df.to_dict(orient='records')
 
-# 不足情報の追加クラス
+# 不足単位情報の追加クラス
 class Info(BaseModel):
     code: str
     credit: float
     main: int
     sub: int
 
-# 不足情報の追加受付
+# 不足単位情報の追加受付
 @app.post("/postcresitinfo/")
 async def post_cresit_info(info: Info):
 

@@ -1,9 +1,10 @@
 import pandas as pd
 import sqlite3
 
-csv_file = './db/credits_copy.csv'
+#csv_file = './db/credits_copy.csv'
+csv_file = './db/sotugyo_tanni.csv'
 dbname = './db/Test.db'
-table_name = 'credits'
+table_name = 'graduate_rule_0'
 
 df = pd.read_csv(csv_file, header=0, index_col=0)
 
