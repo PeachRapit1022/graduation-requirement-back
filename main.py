@@ -25,11 +25,9 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    graduate_rule_0()
-    graduate_rule_1()
-    graduate_rule_2()
-    graduate_rule_3()
-    graduate_rule_4()
+    result = check_graduate_rule()
+    print(result)
+    return result
     return {"Hello": "World"}
 
 dbname = './db/Test.db'
@@ -134,6 +132,9 @@ async def file(file: bytes = File(...)):
     else:
         unknown = 2
         df = db_groupby()
+        result = check_graduate_rule()
+        print(result)
+        return unknown, result
         #print(df)
         return unknown, df.to_dict(orient='records')
 
