@@ -23,6 +23,7 @@ def graduate_rule_0():
             FROM user_record
             JOIN credits
             ON user_record.時間割コード = credits.code
+            WHERE 評語 in ('秀','優','良','可','合格')
 
             GROUP BY main, sub
             ORDER BY main
@@ -53,7 +54,8 @@ def graduate_rule_1():
         ON user_record.時間割コード = credits.code
         JOIN main_class
         ON credits.main = main_class.id
-        WHERE credits.main = 3
+        WHERE 評語 in ('秀','優','良','可','合格')
+        AND credits.main = 3
         '''
     , conn)
     conn.close()
@@ -74,7 +76,8 @@ def graduate_rule_2():
         ON credits.main = main_class.id
         JOIN sub_class
         ON credits.sub = sub_class.id
-        WHERE credits.main = 4
+        WHERE 評語 in ('秀','優','良','可','合格')
+        AND credits.main = 4
         AND (credits.sub = 1 OR credits.sub = 2)
         '''
     , conn)
@@ -96,7 +99,8 @@ def graduate_rule_3():
         ON credits.main = main_class.id
         JOIN sub_class
         ON credits.sub = sub_class.id
-        WHERE credits.main = 4
+        WHERE 評語 in ('秀','優','良','可','合格')
+        AND credits.main = 4
         AND (credits.sub >= 3 AND credits.sub <= 8)
         '''
     , conn)
@@ -118,6 +122,7 @@ def graduate_rule_4():
             FROM user_record
             JOIN credits
             ON user_record.時間割コード = credits.code
+            WHERE 評語 in ('秀','優','良','可','合格')
 
             GROUP BY main, sub
             ORDER BY main
@@ -142,11 +147,11 @@ def check_graduate_rule():
     df4 = graduate_rule_4().to_dict(orient='records')
 
     rule = [
-        '1. 一般教養',
-        '2. 必修科目35単位以上',
-        '3. 共通専門基礎科目or専門基礎科目の選択必修科目から14単位以上',
-        '4. 市民工専門科目の選択必修科目から46単位以上',
-        '5. 市民工各分野の選択必修科目'
+        '▶ 1. 一般教養',
+        '▶ 2. 必修科目35単位以上',
+        '▶ 3. 共通専門基礎科目or専門基礎科目の選択必修科目から14単位以上',
+        '▶ 4. 市民工専門科目の選択必修科目から46単位以上',
+        '▶ 5. 市民工各分野の選択必修科目'
     ]
 
     result = [

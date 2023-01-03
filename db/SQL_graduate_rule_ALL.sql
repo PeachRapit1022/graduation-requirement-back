@@ -9,6 +9,7 @@
             FROM user_record
             JOIN credits
             ON user_record.時間割コード = credits.code
+            WHERE 評語 in ('秀','優','良','可','合格')
 
             GROUP BY main, sub
             ORDER BY main
@@ -33,7 +34,8 @@
         ON credits.main = main_class.id
         JOIN sub_class
         ON credits.sub = sub_class.id
-        WHERE credits.main = 3
+        WHERE 評語 in ('秀','優','良','可','合格')
+        AND credits.main = 3
 
         UNION ALL
 
@@ -46,7 +48,8 @@
         ON credits.main = main_class.id
         JOIN sub_class
         ON credits.sub = sub_class.id
-        WHERE credits.main = 4
+        WHERE 評語 in ('秀','優','良','可','合格')
+        AND credits.main = 4
         AND (credits.sub = 1 OR credits.sub = 2)
 
         UNION ALL
@@ -60,7 +63,8 @@
         ON credits.main = main_class.id
         JOIN sub_class
         ON credits.sub = sub_class.id
-        WHERE credits.main = 4
+        WHERE 評語 in ('秀','優','良','可','合格')
+        AND credits.main = 4
         AND (credits.sub >= 3 AND credits.sub <= 8)
 
         UNION ALL
@@ -74,6 +78,8 @@
             FROM user_record
             JOIN credits
             ON user_record.時間割コード = credits.code
+
+            WHERE 評語 in ('秀','優','良','可','合格')
 
             GROUP BY main, sub
             ORDER BY main
