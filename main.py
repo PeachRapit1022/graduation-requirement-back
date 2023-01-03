@@ -58,7 +58,7 @@ def df_to_db(df: pd.DataFrame):
 
     df.to_sql('user_record', conn, if_exists='replace')
     # 単位情報なしリスト
-    df1 = pd.read_sql_query(
+    df = pd.read_sql_query(
         '''
         SELECT 科目, 時間割コード
         FROM user_record
@@ -71,44 +71,8 @@ def df_to_db(df: pd.DataFrame):
         WHERE credits.code IS NULL
         '''   
         , conn)
-
-    # 単位情報ありリスト
-    df2  = pd.read_sql_query(
-        '''
-        SELECT 科目, code, credit, main_class.name, sub_class.name
-        FROM user_record
-        LEFT JOIN credits
-        ON user_record.時間割コード = credits.code
-        LEFT JOIN main_class
-        ON credits.main = main_class.id
-        LEFT JOIN sub_class
-        ON credits.sub = sub_class.id
-        WHERE credits.code IS NOT NULL
-        '''
-        , conn)
     conn.close()
 
-    return df1, df2
-
-# カテゴリごとの単位数出力
-def db_groupby():
-    conn = sqlite3.connect(dbname)
-
-    df = pd.read_sql_query(
-        '''
-        SELECT main_class.name AS name1, sub_class.name AS name2, SUM(credits.credit) AS sum
-        FROM user_record
-        JOIN credits
-        ON user_record.時間割コード = credits.code
-        JOIN main_class
-        ON credits.main = main_class.id
-        JOIN sub_class
-        ON credits.sub = sub_class.id
-
-        GROUP BY main_class.name, sub_class.name
-        ORDER BY main_class.id
-        '''
-        , conn)
     return df
 
 # ファイルの受け取り、DBへの保存、不足情報の返信
@@ -121,7 +85,7 @@ async def file(file: bytes = File(...)):
     df = csv_to_df(raw_text)
 
     # DFをDBに保存、単位の不足情報を取得
-    df1, df2 = df_to_db(df)
+    df1= df_to_db(df)
 
     # 情報不足あり
     if len(df1) > 0:
@@ -131,12 +95,9 @@ async def file(file: bytes = File(...)):
     # 情報不足なし
     else:
         unknown = 2
-        df = db_groupby()
         result = check_graduate_rule()
         print(result)
         return unknown, result
-        #print(df)
-        return unknown, df.to_dict(orient='records')
 
 # 不足単位情報の追加クラス
 class Info(BaseModel):
