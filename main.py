@@ -6,6 +6,8 @@ from typing import Union
 import sqlite3
 import re
 from graduate import *
+import shutil
+import os
 
 import pandas as pd
 
@@ -13,6 +15,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost:3000",
+    "https://graduation-requirement-front.netlify.app",
 ]
 
 app.add_middleware(
@@ -30,7 +33,16 @@ def read_root():
     return result
     return {"Hello": "World"}
 
-dbname = './db/Test.db'
+dbname = '/tmp/Test.db'
+
+def copy_db():
+    tmp_path = '/tmp'
+    print('F',os.access(tmp_path,os.F_OK))
+    print('R',os.access(tmp_path,os.R_OK))
+    print('W',os.access(tmp_path,os.W_OK))
+    print('X',os.access(tmp_path,os.X_OK))
+
+    shutil.copy('./db/Test.db', dbname)
 
 def csv_to_df(raw_text: str):
 
@@ -81,6 +93,7 @@ def df_to_db(df: pd.DataFrame):
 # ファイルの受け取り、DBへの保存、不足情報の返信
 @app.post("/files/")
 async def file(file: bytes = File(...)):
+    copy_db()
     # 受け取ったファイルのデコード
     raw_text = file.decode('cp932')
 

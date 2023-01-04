@@ -1,12 +1,9 @@
 from pydantic import BaseModel
 from typing import Union
 import sqlite3
-import re
-import simplejson
-
 import pandas as pd
 
-dbname = './db/Test.db'
+dbname = '/tmp/Test.db'
 
 # 進級要件
 def next_grade_rule():
@@ -201,6 +198,7 @@ def graduate_rule_4():
     return df
 
 def check_graduate_rule():
+
     df00 = next_grade_rule().to_dict(orient='records')
     df0 = graduate_rule_0().to_dict(orient='records')
     df1 = graduate_rule_1().to_dict(orient='records')
