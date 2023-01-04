@@ -43,6 +43,9 @@ def csv_to_df(raw_text: str):
     # Columnインデックス生成
     index = list_text[4].split(',')[:-1]
 
+    name = list_text[0].split(',')[1]
+    print(name)
+
     # 不要な行を削除
     list_text = list_text[5:-1]
 
@@ -50,7 +53,7 @@ def csv_to_df(raw_text: str):
     table_text = [i.split(',') for i in list_text]
     df = pd.DataFrame(table_text, columns=index).iloc[:,1:7]
     
-    return df
+    return df, name
 
 def df_to_db(df: pd.DataFrame):
     # DB操作
@@ -82,7 +85,7 @@ async def file(file: bytes = File(...)):
     raw_text = file.decode('cp932')
 
     # CSVをDFに変換
-    df = csv_to_df(raw_text)
+    df, name = csv_to_df(raw_text)
 
     # DFをDBに保存、単位の不足情報を取得
     df1= df_to_db(df)
@@ -90,14 +93,14 @@ async def file(file: bytes = File(...)):
     # 情報不足あり
     if len(df1) > 0:
         unknown = 1
-        return unknown, df1.to_dict(orient='records')
+        return unknown, df1.to_dict(orient='records'), name
 
     # 情報不足なし
     else:
         unknown = 2
         result = check_graduate_rule()
         print(result)
-        return unknown, result
+        return unknown, result, name
 
 # 不足単位情報の追加クラス
 class Info(BaseModel):
