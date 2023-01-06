@@ -20,7 +20,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,7 +33,8 @@ def read_root():
     return result
     return {"Hello": "World"}
 
-dbname = '/tmp/Test.db'
+#dbname = '/tmp/Test.db'
+dbname = './db/Test.db'
 
 def copy_db():
     tmp_path = '/tmp'
@@ -93,7 +94,7 @@ def df_to_db(df: pd.DataFrame):
 # ファイルの受け取り、DBへの保存、不足情報の返信
 @app.post("/files/")
 async def file(file: bytes = File(...)):
-    copy_db()
+    #copy_db()
     # 受け取ったファイルのデコード
     raw_text = file.decode('cp932')
 

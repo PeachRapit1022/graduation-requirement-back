@@ -3,7 +3,8 @@ from typing import Union
 import sqlite3
 import pandas as pd
 
-dbname = '/tmp/Test.db'
+#dbname = '/tmp/Test.db'
+dbname = './db/Test.db'
 
 # 進級要件
 def next_grade_rule():
