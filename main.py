@@ -48,16 +48,16 @@ def copy_db():
 def csv_to_df(raw_text: str):
 
     # 不要な文字を削除
-    raw_text = re.sub('\n+|,"",+|"+|\t+','',raw_text)
+    raw_text = re.sub('\r+|,"",+|"+|\t+','',raw_text)
 
     # 改行ごとにリスト分割
-    list_text = raw_text.split('\r')
+    list_text = raw_text.split('\n')
+    print(list_text[0])
 
     # Columnインデックス生成
     index = list_text[4].split(',')[:-1]
 
     name = list_text[0].split(',')[1]
-    print(name)
 
     # 不要な行を削除
     list_text = list_text[5:-1]
@@ -90,6 +90,11 @@ def df_to_db(df: pd.DataFrame):
     conn.close()
 
     return df
+
+# テスト用
+@app.post("/test/")
+async def file_test(file: bytes = File(...)):
+    return file.decode('cp932')
 
 # ファイルの受け取り、DBへの保存、不足情報の返信
 @app.post("/files/")
