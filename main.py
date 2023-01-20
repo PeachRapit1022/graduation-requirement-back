@@ -52,7 +52,6 @@ def csv_to_df(raw_text: str):
 
     # 改行ごとにリスト分割
     list_text = raw_text.split('\n')
-    print(list_text[0])
 
     # Columnインデックス生成
     index = list_text[4].split(',')[:-1]
